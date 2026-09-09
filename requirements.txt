@@ -3,3 +3,4 @@ python-dotenv
 google-genai>=2.20.0
 emoji
 imageio-ffmpeg
+aiohttp

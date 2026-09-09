@@ -17,6 +17,7 @@ from human_behavior import ContinuousTyping, calculate_human_typing_delay
 from time_utils import get_current_persian_datetime
 from text_processing import normalize_digits, clean_outbound_text
 from logger import logger
+from dynamic_prompt import dynamic_prompt_manager
 import random
 import time
 
@@ -1211,6 +1212,8 @@ async def incoming_message_handler(event):
                     system_prompt = persona_manager.get_prompt("assistant")
                     logger.info(f"💼 Personal Assistant thinking & typing for chat {chat_id} (from {sender_name})...")
                 
+                dynamic_context = await dynamic_prompt_manager.generate_dynamic_context(incoming_text)
+                prompt_input += dynamic_context
                 
                 start_time = time.time()
                 logger.debug(f"[LIFECYCLE] Prompting Gemini API... (Models: {Config.GEMINI_MODELS})")
@@ -1380,6 +1383,9 @@ async def auto_engage_loop():
                     # Dynamically get the active persona instead of assuming 'normal'
                     pal_variant = pal_manager.get_mode(chat_id)
                     system_prompt = persona_manager.get_prompt(pal_variant)
+                    
+                    dynamic_context = await dynamic_prompt_manager.generate_dynamic_context(history_text_for_ai)
+                    prompt_input += dynamic_context
                     
                     logger.debug(f"[LIFECYCLE] Auto-Engage prompting Gemini for chat {chat_id}...")
                     response = await get_response(prompt_input, system_prompt, is_json=True, start_model="CHEAPEST")
