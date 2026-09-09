@@ -1346,9 +1346,21 @@ async def auto_engage_loop():
                         continue
 
                     # Provide the chat context for AI to formulate response
-                    history_text = await get_recent_chat_history(chat_id, limit=Config.SHORT_TERM_MEMORY_LIMIT, include_id=True)
-                    valid_ids = re.findall(r'\(ID:\s*(\d+)\)', history_text)
-                    valid_ids_str = ", ".join(valid_ids) if valid_ids else "هیچکدام"
+                    history_text_with_id = await get_recent_chat_history(chat_id, limit=Config.SHORT_TERM_MEMORY_LIMIT, include_id=True)
+                    
+                    msg_mapping = {}
+                    history_lines_for_ai = []
+                    for line in history_text_with_id.split('\n'):
+                        match = re.search(r'^\(ID:\s*(\d+)\)\s*(.*)', line)
+                        if match:
+                            msg_id = int(match.group(1))
+                            clean_line = match.group(2)
+                            msg_mapping[clean_line] = msg_id
+                            history_lines_for_ai.append(clean_line)
+                        else:
+                            history_lines_for_ai.append(line)
+                            
+                    history_text_for_ai = '\n'.join(history_lines_for_ai)
                     
                     now_persian = get_current_persian_datetime()
                     ltm = memory_manager.get_long_term_summary(chat_id)
@@ -1357,8 +1369,7 @@ async def auto_engage_loop():
                     prompt_input = Prompt.AUTO_ENGAGE_TEMPLATE.format(
                         current_time=now_persian,
                         long_term_context=ltm_context,
-                        history_text=history_text,
-                        valid_ids_str=valid_ids_str,
+                        history_text=history_text_for_ai,
                         duration_minutes=duration_minutes,
                         owner_first_name=Config.OWNER_FIRST_NAME
                     )
@@ -1378,16 +1389,27 @@ async def auto_engage_loop():
                         json_match = re.search(r'\{.*\}', response, re.DOTALL)
                         if json_match:
                             data = json.loads(json_match.group(0))
-                            target_id = data.get("selected_id")
+                            import difflib
+                            selected_message = data.get("selected_message")
                             reply_text = data.get("reply_text")
                             if reply_text:
                                 reply_text = clean_outbound_text(reply_text)
                             
-                            if target_id is not None and str(target_id).lower() != "null" and reply_text:
-                                try:
-                                    target_id = int(target_id)
-                                except (ValueError, TypeError):
-                                    logger.warning(f"⚠️ Invalid target_id from AI: {target_id}")
+                            target_id = None
+                            if selected_message and str(selected_message).lower() != "null" and reply_text:
+                                # Fuzzy match the selected message
+                                best_match = None
+                                highest_ratio = 0.0
+                                for clean_line, m_id in msg_mapping.items():
+                                    ratio = difflib.SequenceMatcher(None, selected_message, clean_line).ratio()
+                                    if ratio > highest_ratio:
+                                        highest_ratio = ratio
+                                        best_match = m_id
+                                
+                                if highest_ratio >= 0.85:
+                                    target_id = best_match
+                                else:
+                                    logger.warning(f"⚠️ Auto-engage hallucinated or mismatched message (ratio {highest_ratio:.2f}): {selected_message}")
                                     continue
                                 
                                 # Prevent the AI from replying to its own messages!
