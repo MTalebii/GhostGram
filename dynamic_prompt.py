@@ -40,7 +40,11 @@ class DynamicPromptManager:
         """
         Injects the live Gold and Dollar (Tether) prices in Tomans if keywords are detected.
         """
-        keywords = ['طلا', 'دلار', 'سکه', 'ارز', 'gold', 'dollar', 'tether', 'تتر']
+        keywords = [
+            'طلا', 'دلار', 'سکه', 'ارز', 'تتر', 'ربع', 'نیم', 'آبشده', 'مثقال', 'صرافی',
+            'یورو', 'پوند', 'درهم', 'لیر',
+            'gold', 'dollar', 'tether', 'usd', 'eur', 'aed', 'try', 'gbp', 'coin'
+        ]
         if not any(k in target_text for k in keywords):
             return ""
 
