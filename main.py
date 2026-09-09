@@ -1400,13 +1400,28 @@ async def auto_engage_loop():
                                 # Fuzzy match the selected message
                                 best_match = None
                                 highest_ratio = 0.0
+                                
+                                # Clean up AI selection just in case
+                                sel_msg_clean = selected_message.strip()
+                                
                                 for clean_line, m_id in msg_mapping.items():
-                                    ratio = difflib.SequenceMatcher(None, selected_message, clean_line).ratio()
+                                    # Compare against the full line (e.g. "[14:03] S: message")
+                                    ratio_full = difflib.SequenceMatcher(None, sel_msg_clean, clean_line).ratio()
+                                    
+                                    # Extract just the message part, ignoring "[14:03] Name: "
+                                    msg_only = re.sub(r'^\[\d{2}:\d{2}\].*?:\s*', '', clean_line).strip()
+                                    ratio_msg_only = difflib.SequenceMatcher(None, sel_msg_clean, msg_only).ratio()
+                                    
+                                    # Substring match gives a massive boost
+                                    ratio_substring = 1.0 if (sel_msg_clean in msg_only or msg_only in sel_msg_clean) and len(sel_msg_clean) > 5 else 0.0
+                                    
+                                    ratio = max(ratio_full, ratio_msg_only, ratio_substring)
+                                    
                                     if ratio > highest_ratio:
                                         highest_ratio = ratio
                                         best_match = m_id
                                 
-                                if highest_ratio >= 0.85:
+                                if highest_ratio >= 0.75:
                                     target_id = best_match
                                 else:
                                     logger.warning(f"⚠️ Auto-engage hallucinated or mismatched message (ratio {highest_ratio:.2f}): {selected_message}")
