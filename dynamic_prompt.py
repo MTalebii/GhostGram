@@ -45,27 +45,32 @@ class DynamicPromptManager:
             return ""
 
         try:
-            logger.debug("[DYNAMIC_PROMPT] Keywords detected. Fetching live gold & dollar prices...")
+            logger.debug("[DYNAMIC_PROMPT] Keywords detected. Fetching live gold & dollar prices from Navasan GitHub...")
             async with aiohttp.ClientSession() as session:
-                # 1. Fetch Toman Rate (USDT to IRT from Nobitex)
-                nobitex_url = "https://api.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=irt"
-                async with session.get(nobitex_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5) as res:
+                # 1. Fetch Currency (Fiat)
+                fiat_url = "https://raw.githubusercontent.com/HosseinOdd/Navasan-API/main/data/fiat.json"
+                async with session.get(fiat_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5) as res:
                     res.raise_for_status()
-                    data = await res.json()
-                    usd_to_toman = float(data["stats"]["usdt-irt"]["latest"])
+                    fiat_data = await res.json(content_type=None)
+                    usd_to_toman = float(fiat_data.get("usd", {}).get("value", 0))
 
-                # 2. Fetch Global Gold (PAXG to USD from CoinGecko)
-                gold_url = "https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd"
+                # 2. Fetch Gold
+                gold_url = "https://raw.githubusercontent.com/HosseinOdd/Navasan-API/main/data/gold.json"
                 async with session.get(gold_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5) as res:
                     res.raise_for_status()
-                    data = await res.json()
-                    xau_usd_price = float(data['pax-gold']['usd'])
+                    gold_data = await res.json(content_type=None)
+                    price_per_gram_18k = float(gold_data.get("18ayar", {}).get("value", 0))
+                    sekkeh = float(gold_data.get("sekkeh", {}).get("value", 0))
 
-                # 3. Calculate Final Price (18k Gold Gram in Tomans)
-                price_per_gram_18k = (xau_usd_price / 31.1034) * 0.75
-                final_toman = price_per_gram_18k * usd_to_toman
-
-                return f"- Live Currency (Iran): 1 USD = {usd_to_toman:,.0f} Tomans\n- Live Gold (18k): 1 Gram = {final_toman:,.0f} Tomans"
+                pieces = []
+                if usd_to_toman > 0:
+                    pieces.append(f"- Live Currency (Iran): 1 USD = {usd_to_toman:,.0f} Tomans")
+                if price_per_gram_18k > 0:
+                    pieces.append(f"- Live Gold (18k): 1 Gram = {price_per_gram_18k:,.0f} Tomans")
+                if sekkeh > 0:
+                    pieces.append(f"- Live Coin (Emami): 1 Coin = {sekkeh:,.0f} Tomans")
+                    
+                return "\n".join(pieces)
         
         except Exception as e:
             logger.error(f"⚠️ Failed to fetch live gold/dollar prices: {e}")
