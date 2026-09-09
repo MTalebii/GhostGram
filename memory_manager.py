@@ -137,7 +137,10 @@ class MemoryManager:
         from text_processing import truncate_text_segment
         if max_chars is None:
             max_chars = self.max_segment_chars
-        return truncate_text_segment(text, max_chars)
+        result = truncate_text_segment(text, max_chars)
+        if len(text) > max_chars:
+            logger.debug(f"[MEMORY] Truncated large message from {len(text)} to {len(result)} chars.")
+        return result
 
     def add_virtual_message(self, chat_id: int, msg_id: int, text: str):
         """Maps a real Telegram message ID to a virtual text (e.g. AI Voice Note text)."""

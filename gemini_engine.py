@@ -119,6 +119,8 @@ class GeminiEngine:
                 logger.info(f"⏱️ Gemini API Latency on {model_to_use}: {elapsed_time:.2f}s")
 
                 raw_text = resp.text or ""
+                preview = raw_text.replace('\n', ' ')[:100] + ('...' if len(raw_text) > 100 else '')
+                logger.debug(f"[GEMINI] Raw Response Snippet: {preview}")
                 if not raw_text.strip():
                     if hasattr(resp, "candidates") and resp.candidates:
                         candidate = resp.candidates[0]

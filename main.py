@@ -1218,6 +1218,9 @@ async def incoming_message_handler(event):
                 elapsed = time.time() - start_time
                 logger.debug(f"[LIFECYCLE] Gemini replied in {elapsed:.2f}s. Response length: {len(response)}")
                 
+                preview = response.replace('\n', ' ')[:150] + ('...' if len(response) > 150 else '')
+                logger.debug(f"[LIFECYCLE] Gemini generated text: {preview}")
+                
                 # Re-verify mode wasn't disabled during AI generation
                 if mode == "pal" and not pal_manager.is_active(chat_id):
                     logger.info(f"🛑 Dropped reply for chat {chat_id} (Pal was deactivated via 000)")
@@ -1498,8 +1501,10 @@ async def auto_engage_loop():
                                         logger.info(f"🕵️ Auto-Engaged naturally in chat {chat_id}")
                             else:
                                 logger.debug(f"[LIFECYCLE] Auto-Engage AI decided to stay quiet (selected_message is null).")
-                    except json.JSONDecodeError:
-                        pass # Ignore if AI failed to output valid JSON
+                        else:
+                            logger.warning(f"⚠️ Auto-Engage failed to find a JSON block in the response.")
+                    except json.JSONDecodeError as e:
+                        logger.warning(f"⚠️ Auto-Engage JSON decode error: {e}. Raw AI output was invalid JSON.")
                         
                 except Exception as e:
                     logger.error(f"⚠️ Auto-Engage error in chat {chat_id}: {e}", exc_info=True)
