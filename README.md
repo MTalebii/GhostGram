@@ -208,7 +208,7 @@ Because GhostGram writes your entire Telegram Session (`SESSION_STRING`) directl
 1. First, double-click `run.bat` on your PC and complete the setup to generate your `SESSION_STRING`.
 2. Open your generated configuration file (e.g. `profiles/default/.env`) and copy all of its text.
 3. Go to [Railway.app](https://railway.app) $\rightarrow$ **New Project** $\rightarrow$ **Deploy from GitHub repo**.
-4. In Railway, open the Variables tab and paste everything you copied. Railway will automatically detect **Cloud Mode** and boot your bot 24/7!
+4. In Railway, open the **Variables** tab, click on **Raw Editor**, and paste the entire `.env` content you copied. Railway will automatically detect **Cloud Mode** and boot your bot 24/7!
 
 ---
 
