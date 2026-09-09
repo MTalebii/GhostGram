@@ -70,8 +70,11 @@
 5. **🧠 Memoria Dual (Corto y Largo Plazo)**:
    - Contexto preciso de los últimos 30 mensajes con resúmenes periódicos en segundo plano de detalles importantes del contacto.
 
-6. **🧹 Purga Fantasma 999 (Ghost Purge)**:
+7. **🧹 Purga Fantasma 999 (Ghost Purge)**:
    - Elimina en segundos y sin dejar rastro todo tu historial de mensajes en la conversación actual.
+
+8. **🌍 Prompting Dinámico (Dynamic Prompting)**:
+   - Inyecta automáticamente datos en tiempo real (como los precios en vivo del Oro y el Dólar en Irán) directamente en el prompt de la IA cuando se detectan palabras clave financieras relevantes.
 
 ---
 

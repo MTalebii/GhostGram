@@ -94,6 +94,14 @@
       <p>Features a 30-message short-term rolling window plus an automatic background long-term memory compressor powered by Gemini.</p>
     </td>
   </tr>
+  <tr>
+    <td width="50%">
+      <h3>🌍 Dynamic Prompting</h3>
+      <p>Automatically injects real-time data (like live Gold and USD prices in Iran) directly into the AI's prompt when relevant financial keywords are detected, without slowing down the bot.</p>
+    </td>
+    <td width="50%">
+    </td>
+  </tr>
 </table>
 
 ---
