@@ -210,6 +210,8 @@ Because GhostGram writes your entire Telegram Session (`SESSION_STRING`) directl
 3. Go to [Railway.app](https://railway.app) $\rightarrow$ **New Project** $\rightarrow$ **Deploy from GitHub repo**.
 4. In Railway, open the **Variables** tab, click on **Raw Editor**, and paste the entire `.env` content you copied. Railway will automatically detect **Cloud Mode** and boot your bot 24/7!
 
+> 💡 **Want multiple bots?** Just create another Service in your Railway project, deploy the same GitHub repo again, and paste the `.env` content from your second profile (e.g. `profiles/work/.env`). Each service will run a separate bot independently!
+
 ---
 
 ### 🖥️ Option 3: 1-Click 24/7 Linux VPS Deployment
