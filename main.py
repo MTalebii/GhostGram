@@ -1401,19 +1401,30 @@ async def auto_engage_loop():
                                 best_match = None
                                 highest_ratio = 0.0
                                 
-                                # Clean up AI selection just in case
-                                sel_msg_clean = selected_message.strip()
+                                # Flawless Normalization
+                                def normalize_text(t):
+                                    t = str(t).lower()
+                                    t = re.sub(r'[^\w\s]', '', t)  # Remove all punctuation
+                                    t = re.sub(r'\s+', ' ', t)     # Normalize whitespace
+                                    return t.strip()
+                                
+                                sel_msg_clean = selected_message.strip(' "\'')
+                                sel_msg_norm = normalize_text(sel_msg_clean)
                                 
                                 for clean_line, m_id in msg_mapping.items():
+                                    clean_line_norm = normalize_text(clean_line)
+                                    
+                                    msg_only = re.sub(r'^\[\d{2}:\d{2}\].*?:\s*', '', clean_line).strip()
+                                    msg_only_norm = normalize_text(msg_only)
+                                    
                                     # Compare against the full line (e.g. "[14:03] S: message")
-                                    ratio_full = difflib.SequenceMatcher(None, sel_msg_clean, clean_line).ratio()
+                                    ratio_full = difflib.SequenceMatcher(None, sel_msg_norm, clean_line_norm).ratio()
                                     
                                     # Extract just the message part, ignoring "[14:03] Name: "
-                                    msg_only = re.sub(r'^\[\d{2}:\d{2}\].*?:\s*', '', clean_line).strip()
-                                    ratio_msg_only = difflib.SequenceMatcher(None, sel_msg_clean, msg_only).ratio()
+                                    ratio_msg_only = difflib.SequenceMatcher(None, sel_msg_norm, msg_only_norm).ratio()
                                     
                                     # Substring match gives a massive boost
-                                    ratio_substring = 1.0 if (sel_msg_clean in msg_only or msg_only in sel_msg_clean) and len(sel_msg_clean) > 5 else 0.0
+                                    ratio_substring = 1.0 if (sel_msg_norm in msg_only_norm or msg_only_norm in sel_msg_norm) and len(sel_msg_norm) > 3 else 0.0
                                     
                                     ratio = max(ratio_full, ratio_msg_only, ratio_substring)
                                     
