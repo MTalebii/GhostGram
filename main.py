@@ -1496,6 +1496,8 @@ async def auto_engage_loop():
                                                 await client.send_message(input_chat, reply_text, reply_to=None, parse_mode=None)
                                         mark_as_replied(chat_id, target_id)
                                         logger.info(f"🕵️ Auto-Engaged naturally in chat {chat_id}")
+                            else:
+                                logger.debug(f"[LIFECYCLE] Auto-Engage AI decided to stay quiet (selected_message is null).")
                     except json.JSONDecodeError:
                         pass # Ignore if AI failed to output valid JSON
                         
