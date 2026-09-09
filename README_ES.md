@@ -199,18 +199,12 @@ Dado que los servidores en la nube no disponen de terminal interactivo para soli
 ---
 
 #### 🚀 Paso 2: Desplegar en [Railway.app](https://railway.app) (Recomendado)
-1. Haz un Fork de este repositorio en tu cuenta de GitHub.
-2. Inicia sesión en Railway.app ➡️ Haz clic en **New Project** ➡️ **Deploy from GitHub repo** ➡️ Selecciona `GhostGram`.
-3. En la pestaña **Variables** de tu servicio, añade las siguientes variables:
-   - `API_ID`: Tu API ID de Telegram
-   - `API_HASH`: Tu API Hash de Telegram
-   - `PHONE_NUMBER`: Tu número de teléfono
-   - `SESSION_STRING`: La cadena obtenida en el Paso 1
-   - `GEMINI_API_KEYS`: Tu clave API de Google Gemini
-   - `OWNER_ID`: Tu ID numérico de Telegram
-   - `OWNER_NAME`: Tu nombre
-   - `OWNER_BIO`: Tu profesión / biografía
-4. Railway compilará automáticamente con el Dockerfile incluido y mantendrá tu bot activo 24/7.
+1. Primero, haz doble clic en `run.bat` en tu PC y completa la configuración para iniciar sesión y generar tu `SESSION_STRING`.
+2. Abre tu archivo de configuración generado (por ejemplo, `profiles/default/.env`) y copia todo su texto.
+3. Inicia sesión en [Railway.app](https://railway.app) ➡️ **New Project** ➡️ **Deploy from GitHub repo**.
+4. En Railway, abre la pestaña **Variables**, haz clic en **Raw Editor** y pega todo el contenido `.env` que copiaste. ¡Railway compilará automáticamente con el Dockerfile incluido y mantendrá tu bot activo 24/7!
+
+> 💡 **¿Quieres varios bots?** Simplemente crea otro Servicio en tu proyecto de Railway, despliega el mismo repositorio de GitHub nuevamente y pega el contenido `.env` de tu segundo perfil (por ejemplo, `profiles/work/.env`). ¡Cada servicio ejecutará un bot separado de forma independiente!
 
 ---
 

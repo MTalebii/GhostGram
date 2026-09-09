@@ -199,18 +199,12 @@ python main.py
 ---
 
 #### 🚀 Шаг 2: Деплой на [Railway.app](https://railway.app) (Рекомендуется)
-1. Сделайте Fork этого репозитория на свой GitHub.
-2. Авторизуйтесь на Railway.app ➡️ **New Project** ➡️ **Deploy from GitHub repo** ➡️ выберите `GhostGram`.
-3. Во вкладке **Variables** добавьте параметры:
-   - `API_ID`: Ваш Telegram API ID
-   - `API_HASH`: Ваш Telegram API Hash
-   - `PHONE_NUMBER`: Ваш номер телефона
-   - `SESSION_STRING`: Скопированная строка сессии из Шага 1
-   - `GEMINI_API_KEYS`: Ключ API Google Gemini
-   - `OWNER_ID`: Ваш Telegram ID (числовой)
-   - `OWNER_NAME`: Ваше имя
-   - `OWNER_BIO`: Ваша профессия / Биография
-4. Railway автоматически соберет проект и запустит бота 24/7!
+1. Сначала запустите `run.bat` на своем ПК и выполните настройку для входа в систему и генерации `.env`.
+2. Откройте сгенерированный файл конфигурации (например, `profiles/default/.env`) и скопируйте весь его текст.
+3. Авторизуйтесь на [Railway.app](https://railway.app) ➡️ **New Project** ➡️ **Deploy from GitHub repo**.
+4. В Railway откройте вкладку **Variables**, нажмите на **Raw Editor** и вставьте всё скопированное содержимое `.env`. Railway автоматически соберет проект и запустит бота 24/7!
+
+> 💡 **Хотите несколько ботов?** Просто создайте еще один сервис (Service) в вашем проекте Railway, разверните тот же репозиторий GitHub еще раз и вставьте содержимое `.env` из вашего второго профиля (например, `profiles/work/.env`). Каждый сервис будет работать как отдельный независимый бот!
 
 ---
 

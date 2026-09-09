@@ -192,27 +192,13 @@ python main.py
 ### ☁️ 方法三：免费 24/7 云端托管 (Railway / Render - 零成本免 VPS)
 无需购买服务器或让个人电脑开机，即可在云端免费 24 小时运行 GhostGram：
 
-#### 🔑 第一步：生成会话秘钥字符串 (SESSION_STRING)
-由于云端服务器为无头环境（Headless），启动时无法交互输入短信验证码，需在本地先生成一次：
-1. 在本地电脑双击 `run.bat` 或运行 `python login.py`。
-2. 输入手机号与 Telegram 登录验证码。
-3. 登录成功后，终端会打印出一段以 `1Ap...` 开头的 **`SESSION_STRING`**，将其复制保存。
+#### 🚀 部署至 [Railway.app](https://railway.app) (强烈推荐)
+1. 首先，在您的电脑上双击 `run.bat` 并完成设置，以登录并生成您的 `SESSION_STRING`。
+2. 打开生成的配置文件（例如 `profiles/default/.env`）并复制其所有文本。
+3. 登录 [Railway.app](https://railway.app) ➡️ **New Project** ➡️ **Deploy from GitHub repo**。
+4. 在 Railway 中，打开 **Variables** 选项卡，点击 **Raw Editor**，然后粘贴您复制的所有 `.env` 内容。Railway 将自动使用内置 Dockerfile 完成构建并启动，实现 24 小时永不掉线！
 
----
-
-#### 🚀 第二步：部署至 [Railway.app](https://railway.app) (强烈推荐)
-1. Fork 本代码库到您的 GitHub 账号。
-2. 登录 Railway.app ➡️ 点击 **New Project** ➡️ 选择 **Deploy from GitHub repo** ➡️ 选中 `GhostGram`。
-3. 在 Railway 项目设置的 **Variables** 选项卡中添加以下环境变量：
-   - `API_ID`: 您的 Telegram API ID
-   - `API_HASH`: 您的 Telegram API Hash
-   - `PHONE_NUMBER`: 您的 Telegram 手机号（带国家区号）
-   - `SESSION_STRING`: 第一步中复制的 Session String
-   - `GEMINI_API_KEYS`: 您的 Google Gemini API Key
-   - `OWNER_ID`: 您的 Telegram 数字用户 ID
-   - `OWNER_NAME`: 您的名字
-   - `OWNER_BIO`: 您的职业/简介
-4. Railway 将自动使用内置 Dockerfile 完成构建并启动，实现 24 小时永不掉线！
+> 💡 **想要多个机器人？** 只需在您的 Railway 项目中创建另一个服务 (Service)，再次部署相同的 GitHub 仓库，然后粘贴第二个配置文件（例如 `profiles/work/.env`）的 `.env` 内容。每个服务都将独立运行一个单独的机器人！
 
 ---
 
